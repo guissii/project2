@@ -43,3 +43,14 @@ Modifications récentes:
   - `ResourcesView.tsx` : Gestion PDF, Vidéos, Exercices, Quiz.
   - `UnitsView.tsx` : Gestion complète des unités / chapitres du programme.
   - `UsersView.tsx` : Gestion des abonnés / étudiants (Standard, Premium).
+
+---
+### 🔒 Identifiants de Test (Démonstration)
+
+**Accès Élève (Tableau de bord Étudiant)**
+- **Email** : `student@taalim.ma`
+- **Mot de passe** : `password123`
+
+**Accès Administrateur (Gestion Nationale)**
+- **Email** : `admin@taalim.ma`
+- **Mot de passe** : `password123`

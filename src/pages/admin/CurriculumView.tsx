@@ -1,30 +1,29 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit2, Trash2, Layers, BookOpen, GraduationCap } from 'lucide-react';
-
-const mockGrades = [
-    { id: '1', cycle: 'Primaire', name: '1ère Année Primaire', code: '1AP' },
-    { id: '2', cycle: 'Collège', name: '3ème Année Collège', code: '3AC' },
-    { id: '3', cycle: 'Lycée', name: 'Tronc Commun', code: 'TC' },
-    { id: '4', cycle: 'Lycée', name: '1ère Année Baccalauréat', code: '1BAC' },
-    { id: '5', cycle: 'Lycée', name: '2ème Année Baccalauréat', code: '2BAC' },
-];
-
-const mockBranches = [
-    { id: '1', name: 'Sciences Mathématiques A', code: 'SMA', grades: ['1BAC', '2BAC'] },
-    { id: '2', name: 'Sciences Expérimentales', code: 'SE', grades: ['1BAC', '2BAC'] },
-    { id: '3', name: 'Sciences Économiques', code: 'ECO', grades: ['1BAC', '2BAC'] },
-];
-
-const mockSubjects = [
-    { id: '1', name: 'Mathématiques', nameAr: 'الرياضيات', code: 'MATH' },
-    { id: '2', name: 'Physique-Chimie', nameAr: 'الفيزياء والكيمياء', code: 'PC' },
-    { id: '3', name: 'Science de la Vie et de la Terre', nameAr: 'علوم الحياة والأرض', code: 'SVT' },
-];
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function CurriculumView() {
+    const { token } = useAuth();
+    const [grades, setGrades] = useState<any[]>([]);
+    const [branches, setBranches] = useState<any[]>([]);
+    const [subjects, setSubjects] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (!token) return;
+        Promise.all([
+            fetch('http://localhost:3001/api/grades', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()),
+            fetch('http://localhost:3001/api/branches', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()), // wait this route requires gradeId normally
+            fetch('http://localhost:3001/api/subjects', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json())
+        ]).then(([gradesData, branchesData, subjectsData]) => {
+            setGrades(gradesData);
+            setBranches(branchesData);
+            setSubjects(subjectsData);
+        }).catch(err => console.error("Failed to load curriculum data", err));
+    }, [token]);
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700 max-w-[1600px] mx-auto pb-20">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -64,7 +63,7 @@ export default function CurriculumView() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {mockGrades.map((grade) => (
+                        {grades.map((grade) => (
                             <div key={grade.id} className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-6 rounded-[2rem] hover:bg-slate-800/80 hover:border-indigo-500/30 transition-all group flex flex-col justify-between min-h-[160px]">
                                 <div className="flex justify-between items-start">
                                     <Badge className="bg-slate-800 text-slate-300 border-slate-700 group-hover:bg-indigo-500/20 group-hover:text-indigo-300 group-hover:border-indigo-500/30 font-mono transition-colors">
@@ -77,7 +76,7 @@ export default function CurriculumView() {
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{grade.cycle}</p>
+                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Cycle non défini</p>
                                     <h4 className="text-xl font-black text-white">{grade.name}</h4>
                                 </div>
                             </div>
@@ -99,7 +98,7 @@ export default function CurriculumView() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {mockBranches.map((branch) => (
+                        {branches.map((branch) => (
                             <div key={branch.id} className="bg-slate-900/50 backdrop-blur-md border border-slate-800 p-8 rounded-[2rem] hover:-translate-y-1 hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all group relative overflow-hidden">
                                 <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors"></div>
                                 <div className="flex justify-between items-start mb-6 relative z-10">
@@ -114,7 +113,7 @@ export default function CurriculumView() {
                                 <div className="relative z-10">
                                     <p className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-widest">Niveaux Assignés</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {branch.grades.map(g => (
+                                        {(branch.grades || []).map((g: string) => (
                                             <Badge key={g} variant="outline" className="bg-slate-950 border-slate-800 text-slate-400">
                                                 {g}
                                             </Badge>
@@ -142,7 +141,7 @@ export default function CurriculumView() {
                     <Card className="bg-slate-900/50 backdrop-blur-md border border-slate-800 shadow-2xl rounded-[2.5rem] overflow-hidden">
                         <CardContent className="p-0">
                             <div className="divide-y divide-slate-800/60">
-                                {mockSubjects.map((sub) => (
+                                {subjects.map((sub) => (
                                     <div key={sub.id} className="p-6 flex items-center justify-between hover:bg-slate-800/40 transition-colors group">
                                         <div className="flex items-center gap-6">
                                             <div className="w-14 h-14 bg-slate-950 rounded-2xl border border-slate-800 flex items-center justify-center font-black text-slate-400 group-hover:text-indigo-400 group-hover:border-indigo-500/30 transition-all shadow-inner">

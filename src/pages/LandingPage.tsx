@@ -42,10 +42,10 @@ export default function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => navigate('/student')} className="hidden sm:flex text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 font-bold rounded-full px-6">
+            <Button variant="ghost" onClick={() => navigate('/auth')} className="hidden sm:flex text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 font-bold rounded-full px-6">
               Connexion
             </Button>
-            <Button onClick={() => navigate('/student')} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 py-6 font-bold text-[15px] shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:shadow-[0_8px_25px_rgb(79,70,229,0.4)] transition-all hover:-translate-y-0.5">
+            <Button onClick={() => navigate('/auth')} className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-8 py-6 font-bold text-[15px] shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:shadow-[0_8px_25px_rgb(79,70,229,0.4)] transition-all hover:-translate-y-0.5">
               Rejoindre gratuitement
             </Button>
           </div>

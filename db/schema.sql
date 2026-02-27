@@ -75,6 +75,7 @@ CREATE TABLE units (
   course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,       -- Ex: "Limites et continuité"
   title_ar VARCHAR(255),             -- Ex: "النهايات والاتصال"
+  description TEXT,                  -- Grande description pour la section
   unit_ref VARCHAR(30),              -- Ex: "MATH-A-01"
   "order" INT DEFAULT 0,
   is_published BOOLEAN DEFAULT true,
@@ -95,6 +96,7 @@ CREATE TABLE resources (
   file_size_kb INT,
   difficulty INT CHECK (difficulty BETWEEN 1 AND 5),
   duration_min INT,                  -- Durée (vidéo/quiz)
+  is_premium BOOLEAN DEFAULT false,
   downloads_count INT DEFAULT 0,
   is_published BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -115,10 +117,14 @@ CREATE TABLE exam_tags (
 CREATE TABLE profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
   full_name VARCHAR(255),
   role VARCHAR(20) DEFAULT 'student' CHECK (role IN ('student', 'admin')),
   grade_id UUID REFERENCES grades(id) ON DELETE SET NULL,
   branch_id UUID REFERENCES branches(id) ON DELETE SET NULL,
+  onboarding_completed BOOLEAN DEFAULT false,
+  is_premium_member BOOLEAN DEFAULT false,
+  interests TEXT[],
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

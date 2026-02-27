@@ -4,19 +4,41 @@ import {
     Users, Eye, TrendingUp,
     Activity, FileText, Download
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function DashboardView() {
+    const { token } = useAuth();
+    const [stats, setStats] = useState({
+        students: 0,
+        resources: 0,
+        downloads: 0,
+        consultations: 0
+    });
+
+    useEffect(() => {
+        if (!token) return;
+        fetch('http://localhost:3001/api/admin/stats', {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(res => res.json())
+            .then(data => setStats(data))
+            .catch(err => console.error(err));
+    }, [token]);
+
+    const metrics = [
+        { title: "Élèves Inscrits", value: stats.students.toLocaleString(), icon: Users, trend: "+12.5%", color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },
+        { title: "Documents PDF", value: stats.resources.toLocaleString(), icon: FileText, trend: "+5.2%", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+        { title: "Téléchargements", value: stats.downloads.toLocaleString(), icon: Download, trend: "+24.8%", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+        { title: "Consultations Vues", value: stats.consultations.toLocaleString(), icon: Eye, trend: "+18.3%", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" }
+    ];
+
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 max-w-[1600px] mx-auto pb-20">
 
             {/* KPI Stats - Ultra Dark Glassmorphism */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {[
-                    { title: "Élèves Inscrits", value: "45,231", icon: Users, trend: "+12.5%", color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },
-                    { title: "PDF Hébergés", value: "12,845", icon: FileText, trend: "+5.2%", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-                    { title: "Téléchargements (30j)", value: "1.2M", icon: Download, trend: "+24.8%", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
-                    { title: "Consultations Vues", value: "4.5M", icon: Eye, trend: "+18.3%", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" }
-                ].map((stat, i) => (
+                {metrics.map((stat, i) => (
                     <Card key={i} className="bg-slate-900/50 backdrop-blur-md border border-slate-800 shadow-xl rounded-[2rem] hover:bg-slate-800/50 transition-all duration-300 group cursor-pointer overflow-hidden relative">
                         <div className={`absolute -right-10 -top-10 w-40 h-40 ${stat.bg} rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700`}></div>
                         <CardContent className="p-8 relative z-10 flex flex-col h-full justify-between gap-6">
