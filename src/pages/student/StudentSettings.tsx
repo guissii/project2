@@ -91,13 +91,13 @@ export default function StudentSettings() {
                                 <div>
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Niveau (Grade)</label>
                                     <div className="block w-full bg-slate-50/50 border border-slate-100 rounded-2xl p-4 text-slate-800 font-bold shadow-inner">
-                                        {user.grade_id ? 'Niveau enregistré' : 'Non défini'}
+                                        {user.grade ? 'Niveau enregistré' : 'Non défini'}
                                     </div>
                                 </div>
                                 <div>
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Filière</label>
                                     <div className="block w-full bg-slate-50/50 border border-slate-100 rounded-2xl p-4 text-slate-800 font-bold shadow-inner flex items-center">
-                                        {user.branch_id ? 'Filière enregistrée' : <span className="text-slate-400">Non défini (Tronc commun)</span>}
+                                        {user.branch ? 'Filière enregistrée' : <span className="text-slate-400">Non défini (Tronc commun)</span>}
                                     </div>
                                 </div>
                             </div>

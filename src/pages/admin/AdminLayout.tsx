@@ -5,9 +5,8 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
     { icon: LayoutDashboard, label: 'Tableau de bord', path: '/admin' },
-    { icon: BookOpen, label: 'Curriculum (Structure)', path: '/admin/curriculum' },
-    { icon: FileVideo, label: 'Ressources & Cours', path: '/admin/resources' },
-    { icon: Library, label: 'Unités du Programme', path: '/admin/units' },
+    { icon: Library, label: 'Modules & Chapitres', path: '/admin/modules' },
+    { icon: FileVideo, label: 'Fichiers & Ressources', path: '/admin/resources' },
     { icon: Users, label: 'Utilisateurs', path: '/admin/users' },
 ];
 

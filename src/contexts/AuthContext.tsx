@@ -7,9 +7,9 @@ type User = {
     full_name: string;
     role: string;
     onboarding_completed: boolean;
-    grade_id: string | null;
-    branch_id: string | null;
-    interests: string[];
+    grade: string | null;
+    branch: string | null;
+    is_premium_member?: boolean;
 };
 
 type AuthContextType = {

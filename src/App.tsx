@@ -9,9 +9,8 @@ import AuthPage from './pages/AuthPage';
 /* Admin Routes */
 import AdminLayout from './pages/admin/AdminLayout';
 import DashboardView from './pages/admin/DashboardView';
-import CurriculumView from './pages/admin/CurriculumView';
 import ResourcesView from './pages/admin/ResourcesView';
-import UnitsView from './pages/admin/UnitsView';
+import ModulesView from './pages/admin/ModulesView';
 import UsersView from './pages/admin/UsersView';
 
 /* Student Routes */
@@ -47,9 +46,8 @@ export default function App() {
           {/* Interface d'Administration (Gestion Nationale) */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<DashboardView />} />
-            <Route path="curriculum" element={<CurriculumView />} />
             <Route path="resources" element={<ResourcesView />} />
-            <Route path="units" element={<UnitsView />} />
+            <Route path="modules" element={<ModulesView />} />
             <Route path="users" element={<UsersView />} />
           </Route>
         </Routes>

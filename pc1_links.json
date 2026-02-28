@@ -1,5 +1,0 @@
-{
-  "success": false,
-  "error": "net::ERR_BLOCKED_BY_CLIENT at http://www.pc1.ma/2bacfr.html",
-  "stack": "Error: net::ERR_BLOCKED_BY_CLIENT at http://www.pc1.ma/2bacfr.html\n    at navigate (C:\\Users\\MSI\\Desktop\\test ia\\app\\node_modules\\puppeteer-core\\lib\\cjs\\puppeteer\\cdp\\Frame.js:184:27)\n    at async Deferred.race (C:\\Users\\MSI\\Desktop\\test ia\\app\\node_modules\\puppeteer-core\\lib\\cjs\\puppeteer\\util\\Deferred.js:36:20)\n    at async CdpFrame.goto (C:\\Users\\MSI\\Desktop\\test ia\\app\\node_modules\\puppeteer-core\\lib\\cjs\\puppeteer\\cdp\\Frame.js:150:25)\n    at async CdpPage.goto (C:\\Users\\MSI\\Desktop\\test ia\\app\\node_modules\\puppeteer-core\\lib\\cjs\\puppeteer\\api\\Page.js:580:20)\n    at async C:\\Users\\MSI\\Desktop\\test ia\\app\\scrape_pc1.cjs:12:9"
-}

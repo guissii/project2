@@ -180,7 +180,7 @@ app.post('/api/auth/register', async (req, res) => {
         // Insert new user
         const result = await pool.query(
             `INSERT INTO profiles (email, password_hash, full_name, role, onboarding_completed) 
-             VALUES ($1, $2, $3, $4, false) RETURNING id, email, full_name, role, onboarding_completed, grade_id, branch_id, interests`,
+             VALUES ($1, $2, $3, $4, false) RETURNING id, email, full_name, role, onboarding_completed, grade, branch`,
             [email, password_hash, full_name, role]
         );
 
@@ -218,7 +218,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
     try {
-        const result = await pool.query('SELECT id, email, full_name, role, grade_id, branch_id, onboarding_completed, interests FROM profiles WHERE id = $1', [req.user.id]);
+        const result = await pool.query('SELECT id, email, full_name, role, grade, branch, onboarding_completed, is_premium_member FROM profiles WHERE id = $1', [req.user.id]);
         if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
         res.json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
@@ -226,13 +226,13 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 
 app.put('/api/auth/onboarding', authenticateToken, async (req, res) => {
     try {
-        const { grade_id, branch_id, interests } = req.body;
+        const { grade, branch } = req.body;
 
         const result = await pool.query(
             `UPDATE profiles 
-             SET grade_id = $1, branch_id = $2, interests = $3, onboarding_completed = true 
-             WHERE id = $4 RETURNING id, email, full_name, role, grade_id, branch_id, onboarding_completed, interests`,
-            [grade_id || null, branch_id || null, interests || [], req.user.id]
+             SET grade = $1, branch = $2, onboarding_completed = true 
+             WHERE id = $3 RETURNING id, email, full_name, role, grade, branch, onboarding_completed, is_premium_member`,
+            [grade || null, branch || null, req.user.id]
         );
 
         res.json(result.rows[0]);
@@ -255,51 +255,59 @@ app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
-app.get('/api/admin/units', authenticateAdmin, async (req, res) => {
+app.get('/api/admin/modules', authenticateAdmin, async (req, res) => {
     try {
-        const { rows } = await pool.query('SELECT * FROM units ORDER BY "order" ASC, title ASC');
+        const { rows } = await pool.query(`
+            SELECT * FROM modules
+            ORDER BY "order" ASC, title ASC
+        `);
         res.json(rows);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
-app.post('/api/admin/units', authenticateAdmin, async (req, res) => {
+app.post('/api/admin/modules', authenticateAdmin, async (req, res) => {
     try {
-        const { course_id, title, description, unit_ref, order, is_published } = req.body;
+        const { title, description, subject, tags, order, is_published } = req.body;
         const result = await pool.query(
-            `INSERT INTO units (course_id, title, description, unit_ref, "order", is_published)
+            `INSERT INTO modules (title, description, subject, tags, "order", is_published)
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            [course_id, title, description, unit_ref || null, order || 0, is_published ?? true]
+            [title, description || null, subject, tags || [], order || 0, is_published ?? true]
         );
         res.json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
-app.put('/api/admin/units/:id', authenticateAdmin, async (req, res) => {
+app.put('/api/admin/modules/:id', authenticateAdmin, async (req, res) => {
     try {
-        const { title, description, unit_ref, order, is_published } = req.body;
+        const { title, description, subject, tags, order, is_published } = req.body;
         const result = await pool.query(
-            `UPDATE units 
+            `UPDATE modules 
              SET title = COALESCE($1, title), description = COALESCE($2, description), 
-                 unit_ref = COALESCE($3, unit_ref), "order" = COALESCE($4, "order"), 
-                 is_published = COALESCE($5, is_published)
-             WHERE id = $6 RETURNING *`,
-            [title, description, unit_ref, order, is_published, req.params.id]
+                 subject = COALESCE($3, subject), tags = COALESCE($4, tags),
+                 "order" = COALESCE($5, "order"), 
+                 is_published = COALESCE($6, is_published)
+             WHERE id = $7 RETURNING *`,
+            [title, description, subject, tags, order, is_published, req.params.id]
         );
-        if (result.rows.length === 0) return res.status(404).json({ error: 'Unit not found' });
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Module not found' });
         res.json(result.rows[0]);
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
+app.delete('/api/admin/modules/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const result = await pool.query('DELETE FROM modules WHERE id = $1 RETURNING id', [req.params.id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Module not found' });
+        res.json({ success: true, id: req.params.id });
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 app.get('/api/admin/resources', authenticateAdmin, async (req, res) => {
     try {
         const { rows } = await pool.query(`
-            SELECT r.*, u.title as unit_title, s.name as subject_name, g.grade_code, b.branch_code
+            SELECT r.*, m.title as module_title, m.subject as subject_name, m.tags
             FROM resources r
-            JOIN units u ON r.unit_id = u.id
-            JOIN courses c ON u.course_id = c.id
-            JOIN subjects s ON c.subject_id = s.id
-            JOIN grades g ON c.grade_id = g.id
-            LEFT JOIN branches b ON c.branch_id = b.id
+            JOIN modules m ON r.module_id = m.id
             ORDER BY r.created_at DESC
         `);
         res.json(rows);
@@ -308,11 +316,11 @@ app.get('/api/admin/resources', authenticateAdmin, async (req, res) => {
 
 app.post('/api/admin/resources', authenticateAdmin, async (req, res) => {
     try {
-        const { unit_id, title, type, file_url, file_size_kb, difficulty, duration_min, is_premium, is_published } = req.body;
+        const { module_id, title, type, file_url, is_premium, is_published } = req.body;
         const result = await pool.query(
-            `INSERT INTO resources (unit_id, title, type, file_url, file_size_kb, difficulty, duration_min, is_premium, is_published)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-            [unit_id, title, type, file_url, file_size_kb, difficulty, duration_min, is_premium || false, is_published ?? true]
+            `INSERT INTO resources (module_id, title, type, file_url, is_premium, is_published)
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [module_id, title, type, file_url, is_premium || false, is_published ?? true]
         );
         res.json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
@@ -320,15 +328,14 @@ app.post('/api/admin/resources', authenticateAdmin, async (req, res) => {
 
 app.put('/api/admin/resources/:id', authenticateAdmin, async (req, res) => {
     try {
-        const { title, type, file_url, file_size_kb, difficulty, duration_min, is_premium, is_published } = req.body;
+        const { title, type, file_url, is_premium, is_published } = req.body;
         const result = await pool.query(
             `UPDATE resources 
              SET title = COALESCE($1, title), type = COALESCE($2, type), file_url = COALESCE($3, file_url), 
-                 file_size_kb = COALESCE($4, file_size_kb), difficulty = COALESCE($5, difficulty), 
-                 duration_min = COALESCE($6, duration_min), is_premium = COALESCE($7, is_premium), 
-                 is_published = COALESCE($8, is_published)
-             WHERE id = $9 RETURNING *`,
-            [title, type, file_url, file_size_kb, difficulty, duration_min, is_premium, is_published, req.params.id]
+                 is_premium = COALESCE($4, is_premium), 
+                 is_published = COALESCE($5, is_published)
+             WHERE id = $6 RETURNING *`,
+            [title, type, file_url, is_premium, is_published, req.params.id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'Resource not found' });
         res.json(result.rows[0]);

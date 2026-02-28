@@ -65,9 +65,8 @@ export default function OnboardingPage() {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    grade_id: selectedGradeId,
-                    branch_id: selectedBranchId || null,
-                    interests: selectedInterests
+                    grade: selectedGradeId,
+                    branch: selectedBranchId || null
                 })
             });
 

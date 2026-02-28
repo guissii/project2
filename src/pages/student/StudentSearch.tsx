@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Search, Download, Star, Eye, ChevronRight, ChevronDown,
-    LayoutGrid, List, FileText, ArrowLeft,
-    BookOpen, PenTool, SlidersHorizontal, X, Loader2
+    Search, Download, Eye, ChevronRight,
+    FileText, ArrowLeft,
+    X, Loader2
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 
 // Resource type labels & colors
@@ -22,7 +21,6 @@ const TYPE_MAP: Record<string, { label: string; color: string }> = {
 };
 
 export default function StudentSearch() {
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
