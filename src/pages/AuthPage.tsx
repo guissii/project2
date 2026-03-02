@@ -27,7 +27,7 @@ export default function AuthPage() {
             : { email: currentEmail, password: currentPassword, full_name: fullName };
 
         try {
-            const res = await fetch(`http://localhost:3001${endpoint}`, {
+            const res = await fetch(`${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

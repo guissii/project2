@@ -4,12 +4,12 @@
 
 -- 1. Insert Admin
 INSERT INTO profiles (id, email, password_hash, full_name, role)
-VALUES ('00000000-0000-0000-0000-000000000001', 'admin@taalim.ma', '$2b$10$eDKSjwQ8x1IxoqkUlVfBNlItboLwYBRPC/rnAaialXyYWPLuC.ty', 'Administrateur', 'admin')
+VALUES ('00000000-0000-0000-0000-000000000001', 'admin@taalim.ma', '$2b$10$VjtMznwpJLNWsTbrgPnriUtnZ7uHjFDeF39kRFpSG1ls.72i', 'Administrateur', 'admin')
 ON CONFLICT (email) DO NOTHING;
 
 -- 2. Insert Student
 INSERT INTO profiles (id, email, password_hash, full_name, role, grade, branch, is_premium_member)
-VALUES ('00000000-0000-0000-0000-000000000002', 'student@taalim.ma', '$2b$10$eDKSjwQ8x1IxoqkUlVfBNlItboLwYBRPC/rnAaialXyYWPLuC.ty', 'Élève Test', 'student', '2BAC', 'SMA', true)
+VALUES ('00000000-0000-0000-0000-000000000002', 'student@taalim.ma', '$2b$10$VjtMznwpJLNWsTbrgPnriUtnZ7uHjFDeF39kRFpSG1ls.72i', 'Élève Test', 'student', '2BAC', 'SMA', true)
 ON CONFLICT (email) DO NOTHING;
 
 -- 3. Insert Modules (Chapitres / Unités)
@@ -100,3 +100,37 @@ INSERT INTO modules (title, subject, tags, "order") VALUES
   ('Unit 8: International Organizations', 'Anglais', ARRAY['Lycée', '2BAC', 'S2'], 8),
   ('Unit 9: Advances in Science and Technology', 'Anglais', ARRAY['Lycée', '2BAC', 'S2'], 9),
   ('Unit 10: Brain Drain', 'Anglais', ARRAY['Lycée', '2BAC', 'S2'], 10);
+
+-- =========================================================================================
+-- 4. Insert Resources For "Loi de Newton"
+-- =========================================================================================
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours (Prof. Sbiro)', 'pdf_cours', 'https://drive.google.com/open?id=1dwdBwPBaln1aMuLWiP8aIefve40uOekF', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours 2', 'pdf_cours', 'https://drive.google.com/open?id=0ByqxF-yryhmydk9MZDh4YzYta0U', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours 3', 'pdf_cours', 'https://drive.google.com/open?id=0ByqxF-yryhmyLW0wc1RQVmZxNTA', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours 4', 'pdf_cours', 'https://drive.google.com/open?id=1je_aGYNpnHLPfpgNKLEobr-EF6ugPi38', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours (Prof. Hajji)', 'pdf_cours', 'https://drive.google.com/open?id=14FLfWBMEmRhJfeCnSc2hHPoV5Y-Q1EvI', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours (Prof. Hadjyne)', 'pdf_cours', 'https://drive.google.com/file/d/1leuWHtiU416iI-9N50NUhLlCsUbA5Sj_/view?usp=sharing', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours (Prof. Asnaoui)', 'pdf_cours', 'https://drive.google.com/file/d/14Yx-XOY-Nhr3BBT3dQu1zooHlHZO8Kq5/view?usp=sharing', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours 8', 'pdf_cours', 'https://drive.google.com/open?id=1ofqhLFauMrLioiLjMOqNaRHcp5gaEVdI', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PPT Cours (Prof. Asnaoui)', 'pdf_cours', 'https://drive.google.com/open?id=1S04-hPvbNrnzjn59N1_IUAtliCEeElMX', true, false FROM modules WHERE title = 'Loi de Newton';
+
+INSERT INTO resources (module_id, title, type, file_url, is_published, is_premium)
+SELECT id, 'PDF Cours 10 (Prof. Asnaoui)', 'pdf_cours', 'https://drive.google.com/open?id=1aj_Jb5JE4qk2Nj2xYl7rBMtL0glm07Nq', true, false FROM modules WHERE title = 'Loi de Newton';

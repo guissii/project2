@@ -29,7 +29,7 @@ export default function ResourceViewer() {
         const loadResource = async () => {
             setIsLoading(true);
             try {
-                const res = await fetch(`http://localhost:3001/api/student/resource/${id}`, {
+                const res = await fetch(`/api/student/resource/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

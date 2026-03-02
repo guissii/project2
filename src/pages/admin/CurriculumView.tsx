@@ -15,9 +15,9 @@ export default function CurriculumView() {
     useEffect(() => {
         if (!token) return;
         Promise.all([
-            fetch('http://localhost:3001/api/grades', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()),
-            fetch('http://localhost:3001/api/branches', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()), // wait this route requires gradeId normally
-            fetch('http://localhost:3001/api/subjects', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json())
+            fetch('/api/grades', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()),
+            fetch('/api/branches', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json()), // wait this route requires gradeId normally
+            fetch('/api/subjects', { headers: { Authorization: `Bearer ${token}` } }).then(res => res.json())
         ]).then(([gradesData, branchesData, subjectsData]) => {
             setGrades(gradesData);
             setBranches(branchesData);

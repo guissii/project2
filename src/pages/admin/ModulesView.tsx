@@ -93,12 +93,15 @@ export default function ModulesView() {
     const [editingModule, setEditingModule] = useState<Module | null>(null);
     const [formData, setFormData] = useState({ title: '', description: '', order: 0, is_published: true });
 
+    // Multi-branch selection state for the dialog
+    const [dialogSelectedBranches, setDialogSelectedBranches] = useState<string[]>([]);
+
     useEffect(() => { if (token) fetchModules(); }, [token]);
 
     const fetchModules = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch('http://localhost:3001/api/admin/modules', { headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch('/api/admin/modules', { headers: { Authorization: `Bearer ${token}` } });
             if (res.ok) setAllModules(await res.json());
         } catch (err) { console.error(err); }
         finally { setIsLoading(false); }
@@ -159,30 +162,59 @@ export default function ModulesView() {
         setEditingModule(null);
         const maxOrder = filtered.length > 0 ? Math.max(...filtered.map(m => m.order)) + 1 : 1;
         setFormData({ title: '', description: '', order: maxOrder, is_published: true });
+        setDialogSelectedBranches(selectedBranch ? [selectedBranch] : []);
         setIsDialogOpen(true);
     };
 
     const openEdit = (mod: Module) => {
         setEditingModule(mod);
         setFormData({ title: mod.title, description: mod.description || '', order: mod.order, is_published: mod.is_published });
+
+        // Extract branches from module tags
+        const availableBranchesInGrade = GRADES[selectedCycle || ''] ? BRANCHES[selectedGrade || '']?.map(b => b.code) || [] : [];
+        const moduleBranches = mod.tags.filter(t => availableBranchesInGrade.includes(t));
+        setDialogSelectedBranches(moduleBranches.length > 0 ? moduleBranches : (selectedBranch ? [selectedBranch] : []));
+
         setIsDialogOpen(true);
     };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Base tags are cycle, grade, and semester
+        const baseTags = [selectedCycle, selectedGrade, selectedSemester].filter(Boolean) as string[];
+
+        // Combine base tags with all selected branches
+        const allTags = [...baseTags, ...dialogSelectedBranches];
+
         try {
             if (editingModule) {
-                await fetch(`http://localhost:3001/api/admin/modules/${editingModule.id}`, {
+                // Determine new tags, keeping any non-branch/cycle/grade/semester tags that might exist 
+                // just in case, but usually we just overwrite with the new hierarchy calculation
+                await fetch(`/api/admin/modules/${editingModule.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({ title: formData.title, description: formData.description || null, subject: selectedSubject, tags: editingModule.tags, order: formData.order, is_published: formData.is_published })
+                    body: JSON.stringify({
+                        title: formData.title,
+                        description: formData.description || null,
+                        subject: selectedSubject,
+                        tags: allTags,
+                        order: formData.order,
+                        is_published: formData.is_published
+                    })
                 });
             } else {
-                const tags = [selectedCycle, selectedGrade, selectedBranch, selectedSemester].filter(Boolean) as string[];
-                await fetch('http://localhost:3001/api/admin/modules', {
+                await fetch('/api/admin/modules', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                    body: JSON.stringify({ title: formData.title, description: formData.description || null, subject: selectedSubject, tags, order: formData.order, is_published: formData.is_published })
+                    body: JSON.stringify({
+                        title: formData.title,
+                        description: formData.description || null,
+                        subject: selectedSubject,
+                        tags: allTags,
+                        order: formData.order,
+                        is_published: formData.is_published
+                    })
                 });
             }
             setIsDialogOpen(false);
@@ -192,7 +224,7 @@ export default function ModulesView() {
 
     const handleDelete = async (id: string) => {
         if (!confirm('Supprimer ce chapitre et toutes ses ressources ?')) return;
-        await fetch(`http://localhost:3001/api/admin/modules/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+        await fetch(`/api/admin/modules/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
         fetchModules();
     };
 
@@ -405,14 +437,45 @@ export default function ModulesView() {
                             </div>
                         </div>
                         <div className="bg-slate-950 rounded-xl p-4 border border-slate-800">
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Contexte</p>
-                            <div className="flex flex-wrap gap-2">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Contexte & Affectation Multiple</p>
+
+                            <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-slate-800/60">
                                 {selectedCycle && <Badge className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20">{selectedCycle}</Badge>}
                                 {selectedGrade && <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20">{selectedGrade}</Badge>}
-                                {selectedBranch && <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/20">{selectedBranch}</Badge>}
                                 {selectedSubject && <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">{selectedSubject}</Badge>}
                                 {selectedSemester && <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">{SEMESTERS.find(s => s.code === selectedSemester)?.label}</Badge>}
                             </div>
+
+                            {selectedGrade && BRANCHES[selectedGrade] && BRANCHES[selectedGrade].length > 0 ? (
+                                <div>
+                                    <p className="text-xs font-bold text-slate-400 mb-2">Assigner à d'autres filières de {selectedGrade} :</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {BRANCHES[selectedGrade].map(b => (
+                                            <label key={b.code} className="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-900 transition-colors border border-transparent hover:border-slate-800">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={dialogSelectedBranches.includes(b.code)}
+                                                    onChange={e => {
+                                                        if (e.target.checked) {
+                                                            setDialogSelectedBranches(prev => [...prev, b.code]);
+                                                        } else {
+                                                            // Require at least one branch if branches exist for this grade
+                                                            if (dialogSelectedBranches.length > 1) {
+                                                                setDialogSelectedBranches(prev => prev.filter(c => c !== b.code));
+                                                            }
+                                                        }
+                                                    }}
+                                                    className="w-4 h-4 rounded border-slate-700 text-rose-500 focus:ring-rose-500 bg-slate-900"
+                                                />
+                                                <span className="font-medium text-slate-300 text-sm">{b.label}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    {dialogSelectedBranches.length === 0 && (
+                                        <p className="text-xs text-rose-400 mt-2 font-medium">⚠️ Veuillez sélectionner au moins une filière.</p>
+                                    )}
+                                </div>
+                            ) : null}
                         </div>
                         <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
                             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="border-slate-700 text-slate-300 hover:bg-slate-800">Annuler</Button>

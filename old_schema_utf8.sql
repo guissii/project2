@@ -1,5 +1,5 @@
--- ============================================================
--- Plateforme E-Learning Marocaine — Architecture Simplifiée
+﻿-- ============================================================
+-- Plateforme E-Learning Marocaine ÔÇö Architecture Simplifi├®e
 -- ============================================================
 
 -- Suppression de toutes les anciennes tables
@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS cycles CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
 DROP TABLE IF EXISTS modules CASCADE;
 
--- 1. Profiles (Utilisateurs / Abonnés)
+-- 1. Profiles (Utilisateurs / Abonn├®s)
 CREATE TABLE profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -31,97 +31,36 @@ CREATE TABLE profiles (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 1b. Cycles, Grades, Branches, and Subjects Structure
-CREATE TABLE cycles (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  name_ar VARCHAR(255),
-  slug VARCHAR(100),
-  "order" INT DEFAULT 0
-);
-
-CREATE TABLE grades (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  cycle_id UUID NOT NULL REFERENCES cycles(id) ON DELETE CASCADE,
-  name VARCHAR(255) NOT NULL,
-  name_ar VARCHAR(255),
-  grade_code VARCHAR(50),
-  "order" INT DEFAULT 0
-);
-
-CREATE TABLE branches (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  name_ar VARCHAR(255),
-  branch_code VARCHAR(50),
-  category VARCHAR(50),
-  "order" INT DEFAULT 0
-);
-
-CREATE TABLE grade_branches (
-  grade_id UUID NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
-  branch_id UUID NOT NULL REFERENCES branches(id) ON DELETE CASCADE,
-  PRIMARY KEY (grade_id, branch_id)
-);
-
-CREATE TABLE subjects (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  name_ar VARCHAR(255),
-  code VARCHAR(50),
-  icon VARCHAR(50),
-  color VARCHAR(50)
-);
-
-CREATE TABLE courses (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  grade_id UUID NOT NULL REFERENCES grades(id) ON DELETE CASCADE,
-  branch_id UUID REFERENCES branches(id) ON DELETE CASCADE,
-  subject_id UUID NOT NULL REFERENCES subjects(id) ON DELETE CASCADE,
-  semester INT DEFAULT 1
-);
-
-CREATE TABLE units (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
-  title VARCHAR(255) NOT NULL,
-  title_ar VARCHAR(255),
-  unit_ref VARCHAR(100),
-  "order" INT DEFAULT 0,
-  is_published BOOLEAN DEFAULT true
-);
-
--- 2. Modules (L'entité centrale : Chapitres ou Unités Pédagogiques)
+-- 2. Modules (L'entit├® centrale : Chapitres ou Unit├®s P├®dagogiques)
 CREATE TABLE modules (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(255) NOT NULL,       -- Ex: "Limites et continuité"
+  title VARCHAR(255) NOT NULL,       -- Ex: "Limites et continuit├®"
   description TEXT,                  
-  subject VARCHAR(100) NOT NULL,     -- Ex: "Mathématiques", "Physique-Chimie"
-  tags TEXT[],                       -- Ex: ['2BAC', 'SMA', 'S1', 'Mathématiques']
+  subject VARCHAR(100) NOT NULL,     -- Ex: "Math├®matiques", "Physique-Chimie"
+  tags TEXT[],                       -- Ex: ['2BAC', 'SMA', 'S1', 'Math├®matiques']
   "order" INT DEFAULT 0,
   is_published BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Resources (Les fichiers Google Drive, YouTube, liés aux Modules)
+-- 3. Resources (Les fichiers Google Drive, YouTube, li├®s aux Modules)
 CREATE TABLE resources (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  module_id UUID REFERENCES modules(id) ON DELETE CASCADE,
-  unit_id UUID REFERENCES units(id) ON DELETE CASCADE,
+  module_id UUID NOT NULL REFERENCES modules(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
   type VARCHAR(30) NOT NULL CHECK (type IN (
     'pdf_cours', 'pdf_resume', 'video_capsule',
     'exercices', 'correction', 'quiz',
     'controle_type', 'annales', 'methode'
   )),
-  file_url TEXT,                     -- URL du PDF (Drive) ou de la Vidéo (YouTube)
-  downloads_count INT DEFAULT 0,     -- Nombre de consultations/téléchargements
+  file_url TEXT,                     -- URL du PDF (Drive) ou de la Vid├®o (YouTube)
+  downloads_count INT DEFAULT 0,     -- Nombre de consultations/t├®l├®chargements
   is_premium BOOLEAN DEFAULT false,
   is_published BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. Favorites (Favoris de l'élève)
+-- 4. Favorites (Favoris de l'├®l├¿ve)
 CREATE TABLE favorites (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   profile_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,

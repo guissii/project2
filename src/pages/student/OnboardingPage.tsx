@@ -27,19 +27,19 @@ export default function OnboardingPage() {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:3001/api/cycles').then(r => r.json()).then(setCycles);
+        fetch('/api/cycles').then(r => r.json()).then(setCycles);
     }, []);
 
     useEffect(() => {
         if (selectedCycleId) {
-            fetch(`http://localhost:3001/api/grades?cycleId=${selectedCycleId}`)
+            fetch(`/api/grades?cycleId=${selectedCycleId}`)
                 .then(r => r.json()).then(setGrades);
         }
     }, [selectedCycleId]);
 
     useEffect(() => {
         if (selectedGradeId) {
-            fetch(`http://localhost:3001/api/branches?gradeId=${selectedGradeId}`)
+            fetch(`/api/branches?gradeId=${selectedGradeId}`)
                 .then(r => r.json()).then(setBranches);
         }
     }, [selectedGradeId]);
@@ -58,7 +58,7 @@ export default function OnboardingPage() {
     const handleFinish = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch('http://localhost:3001/api/auth/onboarding', {
+            const res = await fetch('/api/auth/onboarding', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

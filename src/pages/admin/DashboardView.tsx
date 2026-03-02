@@ -18,7 +18,7 @@ export default function DashboardView() {
 
     useEffect(() => {
         if (!token) return;
-        fetch('http://localhost:3001/api/admin/stats', {
+        fetch('/api/admin/stats', {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())

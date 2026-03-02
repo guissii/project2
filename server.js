@@ -3,13 +3,16 @@ import cors from 'cors';
 import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const { Pool } = pg;
 const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_jwt_key_for_dev';
 
 
 const pool = new Pool({
-    connectionString: 'postgresql://postgres:admin@localhost:5432/postgres',
+    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:admin@localhost:5432/postgres',
 });
 
 const app = express();
