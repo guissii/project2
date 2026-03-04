@@ -4,7 +4,6 @@ import {
   CheckCircle2, ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import '../App.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -52,166 +51,133 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* 2. Hero Section - Conversion Optimized / Aggressive Marketing Copy */}
-      <section className="relative pt-36 pb-24 lg:pt-48 lg:pb-32 overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50/50 via-white to-white">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-indigo-200/40 to-purple-200/40 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-emerald-100/40 to-cyan-100/40 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+      {/* 2. Hero Section - Human & Relatable */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-brand-50/50">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-amber-100/40 to-orange-200/50 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
 
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10 flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-100 bg-indigo-50 text-indigo-700 font-bold text-sm mb-8 shadow-sm cursor-pointer hover:border-indigo-200 transition-colors">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-            </span>
-            +10,000 Nouveaux Résumés ajoutés cette semaine
-          </div>
-
-          <h1 className="text-6xl sm:text-7xl lg:text-[6.5rem] font-black text-slate-900 tracking-tighter leading-[0.95] mb-8 max-w-5xl">
-            Arrêtez d'imprimer.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 overflow-visible py-2 inline-block">
-              Dominez votre année.
-            </span>
-          </h1>
-
-          <p className="text-xl sm:text-2xl text-slate-600 mb-12 leading-relaxed font-medium max-w-3xl">
-            La <strong className="text-slate-900 font-black relative">
-              1ère base documentaire marocaine <span className="absolute -bottom-1 left-0 w-full h-1 bg-amber-400 opacity-60"></span>
-            </strong> pensée exclusivement pour les élèves. Obtenez instantanément accès aux cours, séries d'exercices et corrigés nationaux. Aucun paiement. Aucune publicité.
-          </p>
-
-          {/* Moteur de Recherche Héroïque (Ultra Focus) */}
-          <div className="w-full max-w-4xl bg-white p-2 sm:p-3 rounded-full shadow-[0_20px_60px_rgb(0,0,0,0.08)] flex flex-col sm:flex-row items-center gap-2 border border-slate-200/80 mb-14 relative z-20 group">
-            <div className="flex-1 flex items-center gap-4 px-6 w-full">
-              <Search className="w-6 h-6 text-indigo-500 group-focus-within:text-purple-600 transition-colors" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ex: Examens Nationaux SVT 2023, Résumé Ondes..."
-                className="w-full bg-transparent py-4 text-slate-900 focus:outline-none text-xl lg:text-2xl font-semibold placeholder:text-slate-300 placeholder:font-medium"
-              />
-            </div>
-            <div className="w-full sm:w-auto flex items-center gap-3 px-2 pb-2 sm:pb-0 sm:px-0">
-              <div className="hidden lg:flex items-center gap-2 border-l border-slate-200 text-slate-500 font-bold px-4">
-                Ctrl+K
+            {/* Left Column: Copy */}
+            <div className="flex flex-col items-start text-left animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-200 bg-amber-50 text-amber-800 font-bold text-sm mb-8 shadow-sm">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+                Rejoignez +45,000 lycéens marocains
               </div>
-              <Button size="lg" onClick={() => navigate('/student/search')} className="w-full sm:w-auto bg-slate-900 hover:bg-indigo-600 text-white rounded-full px-12 py-8 text-lg font-bold shadow-xl shadow-slate-900/20 transition-all hover:scale-105 group-hover:bg-indigo-600">
-                Lancer la recherche <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          </div>
 
-          {/* Ultra Social Proof */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-4">
-                <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" alt="Student" />
-                <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150" alt="Student" />
-                <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" alt="Student" />
-                <img className="w-12 h-12 rounded-full border-[3px] border-white object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150" alt="Student" />
-                <div className="w-12 h-12 rounded-full border-[3px] border-white bg-indigo-50 flex items-center justify-center text-xs font-black text-indigo-600">+45k</div>
-              </div>
-              <div className="text-left">
-                <div className="flex gap-1 text-amber-400">
-                  <Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" /><Star className="w-4 h-4 fill-current" />
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 tracking-tighter leading-[1.05] mb-6">
+                Fini les nuits blanches à chercher des <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">anciens examens.</span>
+              </h1>
+
+              <p className="text-lg sm:text-xl text-slate-600 mb-10 leading-relaxed font-medium max-w-xl">
+                On sait à quel point le Bac et le lycée peuvent stresser. C'est pourquoi on a rassemblé <strong>tous les cours, résumés et examens nationaux</strong> au même endroit. Zéro pub, 100% gratuit.
+              </p>
+
+              {/* Moteur de Recherche Héroïque */}
+              <div className="w-full max-w-xl bg-white p-2 sm:p-3 rounded-2xl shadow-[0_20px_60px_rgb(0,0,0,0.08)] flex flex-col sm:flex-row items-center gap-2 border border-slate-200/80 mb-10 group">
+                <div className="flex-1 flex items-center gap-3 px-4 w-full">
+                  <Search className="w-5 h-5 text-amber-500 group-focus-within:text-orange-500 transition-colors" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Ex: Examens Nationaux Math ou SVT..."
+                    className="w-full bg-transparent py-3 text-slate-900 focus:outline-none text-lg font-semibold placeholder:text-slate-400"
+                  />
                 </div>
-                <p className="text-sm font-bold text-slate-700 mt-0.5">Note moyenne de 4.9/5</p>
+                <Button size="lg" onClick={() => navigate('/student/search')} className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 py-6 text-base font-bold transition-all hover:scale-105">
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex -space-x-3">
+                  <img className="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" alt="Student" />
+                  <img className="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150" alt="Student" />
+                  <img className="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" alt="Student" />
+                </div>
+                <p className="text-sm font-bold text-slate-600">Recommandé par les profs et élèves.</p>
               </div>
             </div>
 
-            <div className="hidden sm:block w-px h-10 bg-slate-200"></div>
-
-            <div className="flex items-center gap-3">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Minist%C3%A8re_de_l%27%C3%A9ducation_nationale_Logo.svg/1024px-Minist%C3%A8re_de_l%27%C3%A9ducation_nationale_Logo.svg.png" className="h-10 opacity-40 grayscale" alt="Education Nationale" />
-              <div className="text-left">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Conforme au</p>
-                <p className="text-sm font-black text-slate-700">Programme Marocain</p>
+            {/* Right Column: Image */}
+            <div className="relative animate-in fade-in zoom-in-95 duration-1000 delay-150 mt-10 lg:mt-0">
+              <div className="absolute inset-0 bg-gradient-to-tr from-amber-200 to-orange-100 rounded-[2.5rem] transform rotate-3 scale-105 -z-10"></div>
+              <img
+                src="/images/hero_students.png"
+                alt="Élèves marocains révisant ensemble"
+                className="w-full h-auto object-cover rounded-[2.5rem] shadow-2xl border-4 border-white"
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce hover:animate-none">
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-400 uppercase">Programme à jour</p>
+                  <p className="text-sm font-black text-slate-800">Saison 2025-2026</p>
+                </div>
               </div>
             </div>
+
           </div>
-
         </div>
       </section>
 
-      {/* 3. Value Proposition (Bento SaaS Layout - Apple inspired) */}
-      <section id="plateforme" className="py-24 bg-slate-50 relative overflow-hidden">
+      {/* 3. The Struggle vs Solution (Human Narrative) */}
+      <section id="plateforme" className="py-24 bg-white relative overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
 
-          <div className="text-center max-w-4xl mx-auto mb-20">
-            <h2 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight">Le système académique,<br />réinventé pour <span className="text-indigo-600">l'étudiant</span>.</h2>
+          <div className="text-center max-w-4xl mx-auto mb-20 animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">Le système académique,<br />réinventé pour <span className="text-orange-500">l'étudiant</span>.</h2>
             <p className="text-xl text-slate-500 font-medium leading-relaxed">Arrêtez de perdre du temps sur Google ou dans des groupes WhatsApp encombrés. Tout le programme est là, trié, vérifié et gratuit.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="order-2 md:order-1 relative">
+              <div className="absolute inset-0 bg-orange-100 rounded-[2.5rem] transform -rotate-3 scale-105 -z-10"></div>
+              <img
+                src="/images/student_night.png"
+                alt="Élève révisant tard le soir"
+                className="w-full h-auto object-cover rounded-[2.5rem] shadow-xl border-4 border-white"
+              />
+            </div>
 
-            {/* Main Feature - Long Card */}
-            <div className="md:col-span-2 bg-slate-900 rounded-[2.5rem] p-12 overflow-hidden relative group">
-              <div className="absolute right-0 top-0 w-2/3 h-full mix-blend-overlay opacity-30 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop')] bg-cover bg-center transition-opacity duration-700 group-hover:opacity-40"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-transparent"></div>
+            <div className="order-1 md:order-2">
+              <h3 className="text-3xl lg:text-4xl font-black text-slate-900 mb-6 tracking-tight leading-tight">
+                Arrêtez de mendier des PDFs sur les <span className="text-indigo-600 underline decoration-indigo-200">groupes WhatsApp.</span>
+              </h3>
+              <p className="text-lg text-slate-600 mb-10 leading-relaxed font-medium">
+                On a tous connu ça : la veille du contrôle, un élève demande le résumé de Physique sur le groupe de la classe. Personne ne répond, ou on vous envoie 15 photos floues.
+                <br /><br />
+                Avec Taalim, chaque filière a son espace organisé. Votre téléphone devient votre meilleur classeur, la qualité en plus.
+              </p>
 
-              <div className="relative z-10 w-full md:w-3/4">
-                <Badge className="bg-indigo-500/20 text-indigo-300 border-none mb-6 text-xs font-bold uppercase tracking-widest px-3 py-1">Mode Hors Ligne</Badge>
-                <h3 className="text-4xl font-extrabold text-white mb-6 leading-tight">Téléchargez en un clic. <br />Imprimez. Excellez.</h3>
-                <p className="text-lg text-slate-300 mb-10 font-medium leading-relaxed">
-                  Notre infrastructure CDN vous garantit un téléchargement quasi-instantané, même pour des livres de 200 pages. Pas de popup, pas d'inscription forcée.
-                </p>
-                <div className="flex gap-4">
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                    <p className="text-3xl font-black text-white mb-1">&lt; 1s</p>
-                    <p className="text-sm text-slate-400 font-bold">Temps de réponse</p>
+              <div className="space-y-6">
+                <div className="flex gap-4 items-start">
+                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
+                    <Zap className="w-6 h-6 text-orange-600" />
                   </div>
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                    <p className="text-3xl font-black text-white mb-1">0</p>
-                    <p className="text-sm text-slate-400 font-bold">Publicité ajoutée</p>
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-900 mb-1">Téléchargement instantané</h4>
+                    <p className="text-slate-500 font-medium">Pas de publicités qui s'ouvrent dans tous les sens. Un clic, et le cours est dans votre téléphone grâce à notre infrastructure CDN.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 items-start">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                    <BookOpen className="w-6 h-6 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-900 mb-1">Qualité garantie à 100%</h4>
+                    <p className="text-slate-500 font-medium">Fini les photos de cahiers mal écrites. Uniquement des cours tapés, corrigés et parfaitement conformes au programme marocain.</p>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Smart Search Card */}
-            <div className="bg-white rounded-[2.5rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-between group hover:border-indigo-200 transition-colors">
-              <div>
-                <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-8">
-                  <Zap className="w-7 h-7 text-purple-600" />
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">Moteur Hyper-Intelligent</h3>
-                <p className="text-slate-500 font-medium leading-relaxed">
-                  Filtrez par Année (ex: 2BAC), Filière (ex: Sciences Maths), Matière et Type (Examen ou Cours). Le moteur devine ce que vous cherchez avant même d'avoir fini de taper.
-                </p>
-              </div>
-            </div>
-
-            {/* Personalized Dashboard Card */}
-            <div className="bg-white rounded-[2.5rem] p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 group hover:border-indigo-200 transition-colors">
-              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-8">
-                <Star className="w-7 h-7 text-emerald-600" />
-              </div>
-              <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">Espace SaaS Personnel</h3>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3 text-slate-600 font-bold"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Librairie de Favoris</li>
-                <li className="flex items-center gap-3 text-slate-600 font-bold"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Historique de révision</li>
-                <li className="flex items-center gap-3 text-slate-600 font-bold"><CheckCircle2 className="w-5 h-5 text-emerald-500" /> Suivi de complétion</li>
-              </ul>
-            </div>
-
-            {/* Architecture Card */}
-            <div className="md:col-span-2 bg-[#f8fafc] rounded-[2.5rem] p-12 overflow-hidden relative border-2 border-slate-100">
-              <div className="absolute right-0 bottom-0 translate-y-1/4 translate-x-1/4">
-                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop" className="w-[400px] h-[400px] object-cover rounded-full border-8 border-white shadow-2xl opacity-80" alt="Code Structure" />
-              </div>
-              <div className="relative z-10 md:w-2/3">
-                <h3 className="text-3xl font-black text-slate-900 mb-4 tracking-tight">Programme Officiel. Structuré à la perfection.</h3>
-                <p className="text-lg text-slate-500 font-medium leading-relaxed mb-8">
-                  Chaque document est classifié rigoureusement : Niveau → Semestre → Matière → Chapitre. C'est l'ordre absolu pour les élèves exigeants.
-                </p>
-                <Button onClick={() => navigate('/student/search')} className="bg-white hover:bg-slate-50 text-indigo-600 border border-slate-200 shadow-sm rounded-full px-8 py-6 font-bold text-[15px]">
-                  Aperçu du Catalogue
-                </Button>
-              </div>
-            </div>
-
           </div>
+
         </div>
       </section>
 
