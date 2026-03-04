@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Library, Settings, LogOut, Users, FileVideo, ShieldCheck, ChevronRight, Zap, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Library, Settings, LogOut, Users, ShieldCheck, ChevronRight, Zap, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -7,7 +7,6 @@ import { useAuth } from '../../contexts/AuthContext';
 const menuItems = [
     { icon: LayoutDashboard, label: 'Tableau de bord', path: '/admin' },
     { icon: Library, label: 'Modules & Chapitres', path: '/admin/modules' },
-    { icon: FileVideo, label: 'Fichiers & Ressources', path: '/admin/resources' },
     { icon: Users, label: 'Utilisateurs', path: '/admin/users' },
 ];
 

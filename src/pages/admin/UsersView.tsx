@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, MoreVertical, ShieldCheck, Mail, Calendar, Search, Filter, Download, Crown, Sparkles, UserX, Loader2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Plus, MoreVertical, ShieldCheck, Mail, Calendar, Search, Filter, Download, Crown, Sparkles, UserX, Loader2, Trash2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 type UserProfile = {
@@ -66,6 +67,30 @@ export default function UsersView() {
             }
         } catch (err) {
             console.error('Failed to toggle premium status', err);
+        } finally {
+            setIsUpdating(null);
+        }
+    };
+
+    const deleteUser = async (userId: string) => {
+        if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.")) return;
+
+        setIsUpdating(userId);
+        try {
+            const res = await fetch(`/api/admin/users/${userId}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                setUsers(users.filter(u => u.id !== userId));
+            } else {
+                const data = await res.json();
+                alert(data.error || "Erreur lors de la suppression");
+            }
+        } catch (err) {
+            console.error('Failed to delete user', err);
+            alert("Erreur réseau lors de la suppression");
         } finally {
             setIsUpdating(null);
         }
@@ -218,9 +243,25 @@ export default function UsersView() {
                                                                 )}
                                                             </Button>
                                                         )}
-                                                        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl">
-                                                            <MoreVertical className="w-5 h-5" />
-                                                        </Button>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" size="icon" className="text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl">
+                                                                    <MoreVertical className="w-5 h-5" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="w-48 bg-slate-900 border border-slate-800 text-slate-300">
+                                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                                <DropdownMenuSeparator className="bg-slate-800" />
+                                                                <DropdownMenuItem
+                                                                    onClick={() => deleteUser(user.id)}
+                                                                    disabled={isUpdating === user.id || user.role === 'admin'}
+                                                                    className="text-red-400 focus:text-red-300 focus:bg-red-500/10 hover:text-red-300 hover:bg-red-500/10 cursor-pointer transition-colors"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                                    Supprimer
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
                                                     </div>
                                                 </td>
                                             </tr>

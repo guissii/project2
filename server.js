@@ -501,6 +501,17 @@ app.put('/api/admin/users/:id/premium', authenticateAdmin, async (req, res) => {
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
+app.delete('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
+    try {
+        const result = await pool.query('DELETE FROM profiles WHERE id = $1 RETURNING id', [req.params.id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        res.json({ success: true, id: req.params.id });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Impossible de supprimer cet utilisateur (il a peut-être des données liées).' });
+    }
+});
+
 // ─── STUDENT PREMIUM VERIFICATION ───
 app.get('/api/student/resource/:id', authenticateToken, async (req, res) => {
     try {

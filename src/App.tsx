@@ -9,7 +9,6 @@ import AuthPage from './pages/AuthPage';
 /* Admin Routes */
 import AdminLayout from './pages/admin/AdminLayout';
 import DashboardView from './pages/admin/DashboardView';
-import ResourcesView from './pages/admin/ResourcesView';
 import ModulesView from './pages/admin/ModulesView';
 import UsersView from './pages/admin/UsersView';
 
@@ -46,7 +45,6 @@ export default function App() {
           {/* Interface d'Administration (Gestion Nationale) */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<DashboardView />} />
-            <Route path="resources" element={<ResourcesView />} />
             <Route path="modules" element={<ModulesView />} />
             <Route path="users" element={<UsersView />} />
           </Route>

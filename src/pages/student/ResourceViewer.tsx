@@ -148,18 +148,23 @@ export default function ResourceViewer() {
                 </div>
             </div>
 
-            <Card className="flex-1 bg-slate-900 rounded-[2.5rem] overflow-hidden border-none shadow-2xl relative">
-                {/* Fallback viewer implementation depending on format: Iframe for PDF, Video tag for Videos */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center text-white bg-slate-800">
-                    <FileText className="w-24 h-24 text-slate-600 mb-6" />
-                    <h3 className="text-3xl font-black mb-4">Visionneuse de Document Activable</h3>
-                    <p className="text-slate-400 max-w-lg font-medium text-lg mb-8">
-                        Le fichier "<strong>{resource?.title}</strong>" serait affiché ici en plein écran (via iframe PDF ou lecteur Vidéo HD). Le fichier ciblé est : {resource?.file_url}
-                    </p>
-                    <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent rounded-full px-8 font-bold">
-                        Ouvrir dans un nouvel onglet
-                    </Button>
-                </div>
+            <Card className="flex-1 bg-slate-900 rounded-[2.5rem] overflow-hidden border-none shadow-2xl relative min-h-[500px]">
+                {resource?.file_url ? (
+                    <iframe
+                        src={resource.file_url}
+                        className="absolute inset-0 w-full h-full border-0"
+                        title={resource.title}
+                        allowFullScreen
+                    />
+                ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center text-white bg-slate-800">
+                        <FileText className="w-24 h-24 text-slate-600 mb-6" />
+                        <h3 className="text-3xl font-black mb-4">Erreur de ressource</h3>
+                        <p className="text-slate-400 max-w-lg font-medium text-lg mb-8">
+                            Le lien vers ce document est manquant.
+                        </p>
+                    </div>
+                )}
             </Card>
         </div>
     );
