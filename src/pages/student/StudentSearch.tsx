@@ -8,6 +8,7 @@ import {
     FolderOpen
 } from 'lucide-react';
 import { CYCLES, GRADES, BRANCHES, SUBJECTS } from '../../data/education-hierarchy';
+import { useAuth } from '../../contexts/AuthContext';
 
 /* ─── Resource type config ─── */
 const TYPE_META: Record<string, { label: string; color: string; icon: typeof FileText; group: string }> = {
@@ -31,6 +32,8 @@ type ChapterItem = {
 };
 
 export default function StudentSearch() {
+    const { user } = useAuth();
+    const isPremium = user?.role === 'admin' || user?.is_premium_member;
 
     /* ─ Search ─ */
     const [searchQuery, setSearchQuery] = useState('');
@@ -204,7 +207,8 @@ export default function StudentSearch() {
                                     </div>
                                 ) : (
                                     chapters.map((ch, idx) => {
-                                        const resources = chapterResources[ch.id] || [];
+                                        const allRes = chapterResources[ch.id] || [];
+                                        const resources = isPremium ? allRes : allRes.filter((r: any) => !r.is_premium);
                                         const isLoading = loadingResources === ch.id;
                                         const coursRes = resources.filter(r => r.type === 'pdf_cours' || r.type === 'pdf_resume');
                                         const exoRes = resources.filter(r => r.type === 'exercices' || r.type === 'correction');
@@ -376,20 +380,23 @@ export default function StudentSearch() {
             </div>
 
             {/* Search Results */}
-            {isSearchActive ? (
-                <div className="animate-in fade-in duration-200">
-                    <p className="text-sm font-semibold text-slate-400 mb-4">
-                        {searchResults.length} résultat{searchResults.length !== 1 ? 's' : ''} pour « {searchQuery} »
-                    </p>
-                    {searchResults.length === 0 && !isSearching ? (
-                        <EmptyState text="Aucun résultat trouvé." sub="Essayez un autre terme de recherche." />
-                    ) : (
-                        <div className="flex flex-col gap-3">
-                            {searchResults.map(r => <SearchResultCard key={r.id} resource={r} />)}
-                        </div>
-                    )}
-                </div>
-            ) : (
+            {isSearchActive ? (() => {
+                const visibleResults = isPremium ? searchResults : searchResults.filter((r: any) => !r.is_premium);
+                return (
+                    <div className="animate-in fade-in duration-200">
+                        <p className="text-sm font-semibold text-slate-400 mb-4">
+                            {visibleResults.length} résultat{visibleResults.length !== 1 ? 's' : ''} pour « {searchQuery} »
+                        </p>
+                        {visibleResults.length === 0 && !isSearching ? (
+                            <EmptyState text="Aucun résultat trouvé." sub="Essayez un autre terme de recherche." />
+                        ) : (
+                            <div className="flex flex-col gap-3">
+                                {visibleResults.map(r => <SearchResultCard key={r.id} resource={r} />)}
+                            </div>
+                        )}
+                    </div>
+                )
+            })() : (
                 <>
                     {/* Navigation header */}
                     {step !== 'cycle' && (
