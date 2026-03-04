@@ -429,6 +429,78 @@ app.delete('/api/admin/resources/:id', authenticateAdmin, async (req, res) => {
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
+// ─── ADMIN USERS MANAGEMENT ───
+app.get('/api/admin/users', authenticateAdmin, async (req, res) => {
+    try {
+        const { rows } = await pool.query(`
+            SELECT id, email, full_name, role, grade, branch, onboarding_completed, is_premium_member, created_at
+            FROM profiles
+            ORDER BY created_at DESC
+        `);
+        res.json(rows);
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
+app.get('/api/admin/seed_users', async (req, res) => {
+    try {
+        const hashedPassword = await bcrypt.hash('password123', 10);
+
+        // Check if admin test user exists
+        const { rows: existingAdmins } = await pool.query('SELECT id FROM profiles WHERE email = $1', ['admin.test@taalim.ma']);
+        if (existingAdmins.length === 0) {
+            await pool.query(
+                `INSERT INTO profiles (email, full_name, password_hash, role, grade, branch, onboarding_completed, is_premium_member)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                ['admin.test@taalim.ma', 'Admin Test', hashedPassword, 'admin', null, null, true, false]
+            );
+        }
+
+        // Check if eleve test exists
+        const { rows: existingEleves } = await pool.query('SELECT id FROM profiles WHERE email = $1', ['eleve.test@taalim.ma']);
+        if (existingEleves.length === 0) {
+            await pool.query(
+                `INSERT INTO profiles (email, full_name, password_hash, role, grade, branch, onboarding_completed, is_premium_member)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                ['eleve.test@taalim.ma', 'Élève Test', hashedPassword, 'student', '1BAC', 'SM', true, false]
+            );
+        }
+
+        // Add random mock users
+        const mockUsers = [
+            ['youssef.amrani@example.com', 'Youssef Amrani', 'student', '2BAC', 'SMA', true, false],
+            ['lina.benali@example.com', 'Lina Benali', 'student', 'TC', 'SC', true, true],
+            ['amina.tazi@example.com', 'Amina Tazi', 'student', '1BAC', 'SE', false, false]
+        ];
+
+        for (const user of mockUsers) {
+            const { rows } = await pool.query('SELECT id FROM profiles WHERE email = $1', [user[0]]);
+            if (rows.length === 0) {
+                await pool.query(
+                    `INSERT INTO profiles (email, full_name, password_hash, role, grade, branch, onboarding_completed, is_premium_member)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                    [user[0], user[1], hashedPassword, user[2], user[3], user[4], user[5], user[6]]
+                );
+            }
+        }
+        res.json({ success: true, message: 'Database seeded successfully.' });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error', details: err.message }); }
+});
+
+app.put('/api/admin/users/:id/premium', authenticateAdmin, async (req, res) => {
+    try {
+        const { is_premium } = req.body;
+        const result = await pool.query(
+            `UPDATE profiles 
+             SET is_premium_member = $1
+             WHERE id = $2 RETURNING id, email, full_name, role, is_premium_member`,
+            [is_premium, req.params.id]
+        );
+
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        res.json(result.rows[0]);
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
 // ─── STUDENT PREMIUM VERIFICATION ───
 app.get('/api/student/resource/:id', authenticateToken, async (req, res) => {
     try {
