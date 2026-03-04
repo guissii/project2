@@ -14,15 +14,16 @@ export default function AuthPage() {
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    const performAuth = async (overrideEmail?: string, overridePassword?: string) => {
+    const performAuth = async (overrideEmail?: string, overridePassword?: string, forceLogin?: boolean) => {
         setError('');
         setIsLoading(true);
 
         const currentEmail = overrideEmail || email;
         const currentPassword = overridePassword || password;
+        const useLogin = forceLogin !== undefined ? forceLogin : isLogin;
 
-        const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-        const body = isLogin
+        const endpoint = useLogin ? '/api/auth/login' : '/api/auth/register';
+        const body = useLogin
             ? { email: currentEmail, password: currentPassword }
             : { email: currentEmail, password: currentPassword, full_name: fullName };
 
@@ -205,7 +206,7 @@ export default function AuthPage() {
                                     setIsLogin(true);
                                     setEmail('student@taalim.ma');
                                     setPassword('password123');
-                                    performAuth('student@taalim.ma', 'password123');
+                                    performAuth('student@taalim.ma', 'password123', true);
                                 }}
                                 className="px-4 py-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-sm font-bold text-slate-700 transition-colors text-center disabled:opacity-50"
                             >
@@ -218,7 +219,7 @@ export default function AuthPage() {
                                     setIsLogin(true);
                                     setEmail('admin@taalim.ma');
                                     setPassword('password123');
-                                    performAuth('admin@taalim.ma', 'password123');
+                                    performAuth('admin@taalim.ma', 'password123', true);
                                 }}
                                 className="px-4 py-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-sm font-bold text-slate-700 transition-colors text-center disabled:opacity-50"
                             >

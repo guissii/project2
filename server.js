@@ -65,6 +65,35 @@ app.get('/api/branches', async (req, res) => {
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
+// ─── GRADES WITH BRANCHES (tree view for student library) ───
+app.get('/api/grades-with-branches', async (req, res) => {
+    try {
+        const { cycleId } = req.query;
+        if (!cycleId) return res.status(400).json({ error: 'cycleId is required' });
+
+        // Get all grades for this cycle
+        const gradesResult = await pool.query(
+            'SELECT * FROM grades WHERE cycle_id = $1 ORDER BY "order" ASC',
+            [cycleId]
+        );
+
+        // For each grade, fetch its branches
+        const gradesWithBranches = await Promise.all(
+            gradesResult.rows.map(async (grade) => {
+                const branchesResult = await pool.query(`
+                    SELECT b.* FROM branches b
+                    JOIN grade_branches gb ON b.id = gb.branch_id
+                    WHERE gb.grade_id = $1
+                    ORDER BY b."order" ASC
+                `, [grade.id]);
+                return { ...grade, branches: branchesResult.rows };
+            })
+        );
+
+        res.json(gradesWithBranches);
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
 // ─── SUBJECTS (by grade + branch + semester) ───
 app.get('/api/subjects', async (req, res) => {
     try {
@@ -117,7 +146,40 @@ app.get('/api/resources', async (req, res) => {
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
-// ─── SEARCH (full-text across resources + units) ───
+// ─── BRIDGE: Modules by tags (for student navigation) ───
+app.get('/api/modules-by-tags', async (req, res) => {
+    try {
+        const { gradeCode, branchCode, semester, subject } = req.query;
+
+        let query = `SELECT * FROM modules WHERE is_published = true`;
+        const params = [];
+
+        if (gradeCode) { params.push(gradeCode); query += ` AND $${params.length} = ANY(tags)`; }
+        if (branchCode) { params.push(branchCode); query += ` AND $${params.length} = ANY(tags)`; }
+        if (semester) { params.push(`S${semester}`); query += ` AND $${params.length} = ANY(tags)`; }
+        if (subject) { params.push(subject); query += ` AND subject = $${params.length}`; }
+
+        query += ' ORDER BY "order" ASC';
+        const { rows } = await pool.query(query, params);
+        res.json(rows);
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
+// ─── BRIDGE: Resources for a single module ───
+app.get('/api/module-resources', async (req, res) => {
+    try {
+        const { moduleId, type } = req.query;
+        if (!moduleId) return res.json([]);
+        let query = 'SELECT * FROM resources WHERE module_id = $1 AND is_published = true';
+        const params = [moduleId];
+        if (type) { params.push(type); query += ` AND type = $${params.length}`; }
+        query += ' ORDER BY created_at DESC';
+        const { rows } = await pool.query(query, params);
+        res.json(rows);
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
+// ─── SEARCH (full-text across both unit-based AND module-based resources) ───
 app.get('/api/search', async (req, res) => {
     try {
         const { q } = req.query;
@@ -125,18 +187,32 @@ app.get('/api/search', async (req, res) => {
         const searchTerm = `%${q}%`;
 
         const { rows } = await pool.query(`
-            SELECT r.*, u.title as unit_title, s.name as subject_name, g.grade_code,
-                   b.branch_code, c.semester
-            FROM resources r
-            JOIN units u ON r.unit_id = u.id
-            JOIN courses c ON u.course_id = c.id
-            JOIN subjects s ON c.subject_id = s.id
-            JOIN grades g ON c.grade_id = g.id
-            LEFT JOIN branches b ON c.branch_id = b.id
-            WHERE r.is_published = true AND (
-                r.title ILIKE $1 OR u.title ILIKE $1 OR s.name ILIKE $1
+            (
+                SELECT r.id, r.title, r.type, r.file_url, r.downloads_count, r.is_premium, r.is_published,
+                       u.title as unit_title, s.name as subject_name, g.grade_code,
+                       b.branch_code, c.semester, 'unit' as source
+                FROM resources r
+                JOIN units u ON r.unit_id = u.id
+                JOIN courses c ON u.course_id = c.id
+                JOIN subjects s ON c.subject_id = s.id
+                JOIN grades g ON c.grade_id = g.id
+                LEFT JOIN branches b ON c.branch_id = b.id
+                WHERE r.is_published = true AND (
+                    r.title ILIKE $1 OR u.title ILIKE $1 OR s.name ILIKE $1
+                )
             )
-            ORDER BY r.downloads_count DESC
+            UNION ALL
+            (
+                SELECT r.id, r.title, r.type, r.file_url, r.downloads_count, r.is_premium, r.is_published,
+                       m.title as unit_title, m.subject as subject_name, NULL as grade_code,
+                       NULL as branch_code, NULL::int as semester, 'module' as source
+                FROM resources r
+                JOIN modules m ON r.module_id = m.id
+                WHERE r.is_published = true AND m.is_published = true AND (
+                    r.title ILIKE $1 OR m.title ILIKE $1 OR m.subject ILIKE $1
+                )
+            )
+            ORDER BY downloads_count DESC
             LIMIT 50
         `, [searchTerm]);
         res.json(rows);

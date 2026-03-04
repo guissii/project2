@@ -140,9 +140,9 @@ export default function StudentLayout() {
                 />
             )}
 
-            {/* Sidebar - Desktop & Mobile */}
+            {/* Sidebar - Fixed on mobile, static on desktop */}
             <aside className={`
-                // Update sidebar look to be slightly transparent
+                fixed lg:static inset-y-0 left-0
                 w-[280px] md:w-[320px] bg-white/60 backdrop-blur-xl flex flex-col 
                 shadow-[8px_0_30px_rgba(0,0,0,0.03)] border-r border-white/60
                 transition-transform duration-300 ease-in-out z-40
@@ -151,27 +151,27 @@ export default function StudentLayout() {
                 <SidebarContent />
             </aside>
 
-            {/* Main Content Area */}
+            {/* Main Content Area - takes full width on mobile */}
             <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative bg-[#f8faff] before:absolute before:inset-0 before:bg-[url('https://grainy-gradients.vercel.app/noise.svg')] before:opacity-[0.03] before:pointer-events-none">
-                <header className="h-20 md:h-28 flex items-center justify-between px-6 md:px-12 z-20 bg-white/40 backdrop-blur-3xl border-b border-white border-opacity-50 shrink-0">
-                    <div className="flex items-center gap-4">
+                <header className="h-14 sm:h-16 md:h-20 lg:h-28 flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 z-20 bg-white/40 backdrop-blur-3xl border-b border-white border-opacity-50 shrink-0">
+                    <div className="flex items-center gap-3 md:gap-4 min-w-0">
                         <button
                             onClick={toggleMobileMenu}
-                            className="lg:hidden p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="lg:hidden p-2 -ml-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
                         >
                             <Menu className="w-6 h-6" />
                         </button>
-                        <div>
-                            <h2 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight truncate max-w-[200px] sm:max-w-none">
+                        <div className="min-w-0">
+                            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight truncate">
                                 {menuItems.find(i => i.path === location.pathname)?.label || 'Espace Étudiant'}
                             </h2>
-                            <p className="text-slate-500 text-[11px] md:text-[15px] font-medium mt-0.5 md:mt-1 hidden sm:block">L'accès premium vers l'excellence académique.</p>
+                            <p className="text-slate-500 text-[11px] md:text-[13px] lg:text-[15px] font-medium mt-0.5 md:mt-1 hidden sm:block truncate">L'accès premium vers l'excellence académique.</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 md:gap-6">
+                    <div className="flex items-center gap-2 sm:gap-3 md:gap-6 shrink-0">
                         {/* Gen-Z Gamification Stats */}
-                        <div className="hidden sm:flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 h-10 md:h-12 shadow-sm">
+                        <div className="hidden md:flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 h-10 md:h-12 shadow-sm">
                             <div className="flex items-center gap-1.5 font-black text-amber-500 text-sm">
                                 <span className="text-base">🔥</span> 12 <span className="text-[10px] uppercase tracking-wider text-slate-400">Jours</span>
                             </div>
@@ -185,14 +185,14 @@ export default function StudentLayout() {
                             <Search className="w-5 h-5 absolute left-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
                             <input type="text" placeholder="Recherche rapide (Ctrl+K)" className="pl-14 pr-5 py-3 md:py-4 w-full border border-slate-200 hover:border-slate-300 rounded-full text-[13px] md:text-[15px] bg-slate-50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-400 transition-all shadow-sm font-semibold placeholder:text-slate-400 placeholder:font-medium" />
                         </div>
-                        <Button size="icon" className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 text-slate-600 border border-slate-200 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 shadow-sm relative shrink-0">
+                        <Button size="icon" className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-slate-100 text-slate-600 border border-slate-200 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 shadow-sm relative shrink-0">
                             <div className="absolute top-[2px] right-[2px] md:top-1 md:right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-slate-100"></div>
                             <BookOpen className="w-4 h-4 md:w-5 md:h-5" />
                         </Button>
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-12 scroll-smooth">
+                <div className="flex-1 overflow-auto p-3 sm:p-4 md:p-6 lg:p-12 scroll-smooth">
                     <Outlet />
                 </div>
             </main>

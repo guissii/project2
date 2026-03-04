@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, Edit2, Trash2, Library, ArrowLeft, ChevronRight, BookOpen, GraduationCap, Calendar, GitBranch } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { CYCLES, GRADES, BRANCHES, SEMESTERS } from '../../data/education-hierarchy';
 
 type Module = {
     id: string;
@@ -16,62 +17,6 @@ type Module = {
     is_published: boolean;
 };
 
-// ════════════════════════════════════════════════════════════════
-// Moroccan Education System Hierarchy (hardcoded reference data)
-// ════════════════════════════════════════════════════════════════
-
-const CYCLES = [
-    { code: 'Lycée', label: 'Lycée (Secondaire Qualifiant)', label_ar: 'الثانوي التأهيلي', icon: '🎓' },
-    { code: 'Collège', label: 'Collège (Secondaire Collégial)', label_ar: 'الثانوي الإعدادي', icon: '📚' },
-    { code: 'Primaire', label: 'Primaire (Enseignement Primaire)', label_ar: 'التعليم الابتدائي', icon: '✏️' },
-];
-
-const GRADES: Record<string, { code: string; label: string; label_ar: string }[]> = {
-    'Lycée': [
-        { code: 'TC', label: 'Tronc Commun', label_ar: 'الجذع المشترك' },
-        { code: '1BAC', label: '1ère Année Bac', label_ar: 'الأولى باكالوريا' },
-        { code: '2BAC', label: '2ème Année Bac', label_ar: 'الثانية باكالوريا' },
-    ],
-    'Collège': [
-        { code: '1AC', label: '1ère Année Collège', label_ar: 'الأولى إعدادي' },
-        { code: '2AC', label: '2ème Année Collège', label_ar: 'الثانية إعدادي' },
-        { code: '3AC', label: '3ème Année Collège', label_ar: 'الثالثة إعدادي' },
-    ],
-    'Primaire': [
-        { code: '1AP', label: '1ère Année', label_ar: 'الأول ابتدائي' },
-        { code: '2AP', label: '2ème Année', label_ar: 'الثاني ابتدائي' },
-        { code: '3AP', label: '3ème Année', label_ar: 'الثالث ابتدائي' },
-        { code: '4AP', label: '4ème Année', label_ar: 'الرابع ابتدائي' },
-        { code: '5AP', label: '5ème Année', label_ar: 'الخامس ابتدائي' },
-        { code: '6AP', label: '6ème Année', label_ar: 'السادس ابتدائي' },
-    ],
-};
-
-const BRANCHES: Record<string, { code: string; label: string; label_ar: string }[]> = {
-    'TC': [
-        { code: 'TC_SCI', label: 'Tronc Commun Sciences', label_ar: 'الجذع المشترك العلمي' },
-        { code: 'TC_TECH', label: 'Tronc Commun Technologique', label_ar: 'الجذع المشترك التكنولوجي' },
-        { code: 'TC_LET', label: 'Tronc Commun Lettres', label_ar: 'الجذع المشترك الأدبي' },
-    ],
-    '1BAC': [
-        { code: 'SMA', label: 'Sciences Math A', label_ar: 'علوم رياضية أ' },
-        { code: 'SMB', label: 'Sciences Math B', label_ar: 'علوم رياضية ب' },
-        { code: 'SE', label: 'Sciences Expérimentales', label_ar: 'علوم تجريبية' },
-        { code: 'LET', label: 'Lettres et Sciences Humaines', label_ar: 'آداب وعلوم إنسانية' },
-    ],
-    '2BAC': [
-        { code: 'SMA', label: 'Sciences Math A', label_ar: 'علوم رياضية أ' },
-        { code: 'SMB', label: 'Sciences Math B', label_ar: 'علوم رياضية ب' },
-        { code: 'PC', label: 'Sciences Physiques-Chimie', label_ar: 'علوم فيزيائية' },
-        { code: 'SVT', label: 'Sciences de la Vie et Terre', label_ar: 'علوم الحياة والأرض' },
-        { code: 'LET', label: 'Lettres et Sciences Humaines', label_ar: 'آداب وعلوم إنسانية' },
-    ],
-};
-
-const SEMESTERS = [
-    { code: 'S1', label: 'Semestre 1', label_ar: 'الأسدس الأول' },
-    { code: 'S2', label: 'Semestre 2', label_ar: 'الأسدس الثاني' },
-];
 
 type NavStep = 'cycle' | 'grade' | 'branch' | 'subject' | 'semester' | 'modules';
 
